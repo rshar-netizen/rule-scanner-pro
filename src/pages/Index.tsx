@@ -1,7 +1,8 @@
 import { Header } from '@/components/Header';
 import { DQExtractionTab } from '@/components/DQExtractionTab';
+import { RuleCreationTab } from '@/components/RuleCreationTab';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { FileSearch, BarChart3, Settings, Workflow } from 'lucide-react';
+import { FileSearch, BarChart3, Settings, Wand2 } from 'lucide-react';
 
 const Index = () => {
   return (
@@ -26,13 +27,13 @@ const Index = () => {
               <FileSearch className="w-4 h-4" />
               <span className="hidden sm:inline">Rule Extraction</span>
             </TabsTrigger>
+            <TabsTrigger value="creation" className="flex items-center gap-2">
+              <Wand2 className="w-4 h-4" />
+              <span className="hidden sm:inline">Rule Creation</span>
+            </TabsTrigger>
             <TabsTrigger value="analytics" className="flex items-center gap-2" disabled>
               <BarChart3 className="w-4 h-4" />
               <span className="hidden sm:inline">Analytics</span>
-            </TabsTrigger>
-            <TabsTrigger value="pipelines" className="flex items-center gap-2" disabled>
-              <Workflow className="w-4 h-4" />
-              <span className="hidden sm:inline">Pipelines</span>
             </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center gap-2" disabled>
               <Settings className="w-4 h-4" />
@@ -43,16 +44,14 @@ const Index = () => {
           <TabsContent value="extraction" className="mt-0">
             <DQExtractionTab />
           </TabsContent>
+
+          <TabsContent value="creation" className="mt-0">
+            <RuleCreationTab />
+          </TabsContent>
           
           <TabsContent value="analytics">
             <div className="glass-card p-12 text-center">
               <p className="text-muted-foreground">Analytics dashboard coming soon...</p>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="pipelines">
-            <div className="glass-card p-12 text-center">
-              <p className="text-muted-foreground">Pipeline management coming soon...</p>
             </div>
           </TabsContent>
           
