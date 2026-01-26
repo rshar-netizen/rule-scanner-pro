@@ -1,86 +1,73 @@
 import { Header } from '@/components/Header';
-import { MetricCard } from '@/components/MetricCard';
-import { CodeScanner } from '@/components/CodeScanner';
-import { RulesCatalog } from '@/components/RulesCatalog';
-import { RuntimeLogs } from '@/components/RuntimeLogs';
-import { PipelineHealth } from '@/components/PipelineHealth';
-import { mockRules, mockPipelines } from '@/data/mockData';
-import { ShieldCheck, AlertTriangle, CheckCircle2, Clock } from 'lucide-react';
+import { DQExtractionTab } from '@/components/DQExtractionTab';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { FileSearch, BarChart3, Settings, Workflow } from 'lucide-react';
 
 const Index = () => {
-  const totalRules = mockRules.length;
-  const passingRules = mockRules.filter(r => r.status === 'passing').length;
-  const failingRules = mockRules.filter(r => r.status === 'failing').length;
-  const warningRules = mockRules.filter(r => r.status === 'warning').length;
-  const avgPassRate = (mockRules.reduce((sum, r) => sum + r.passRate, 0) / mockRules.length).toFixed(1);
-
   return (
     <div className="min-h-screen bg-background">
       <Header />
       
       <main className="container mx-auto px-6 py-8 space-y-8">
         {/* Hero Section */}
-        <div className="text-center space-y-4 py-8">
+        <div className="text-center space-y-4 py-6">
           <h2 className="text-4xl font-bold tracking-tight">
-            Data Quality <span className="text-gradient">Rules Visibility</span>
+            Data Quality <span className="text-gradient">LLM Tool</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Automatically extract, track, and monitor data quality rules from your ingestion pipelines. 
-            Get real-time visibility into rule execution and compliance.
+            AI-powered extraction and validation of data quality rules from your ingestion pipelines.
           </p>
         </div>
 
-        {/* Metrics Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <MetricCard
-            title="Total Rules"
-            value={totalRules}
-            subtitle="Extracted from codebase"
-            icon={ShieldCheck}
-            variant="default"
-          />
-          <MetricCard
-            title="Passing"
-            value={passingRules}
-            subtitle={`${((passingRules / totalRules) * 100).toFixed(0)}% of total`}
-            icon={CheckCircle2}
-            variant="success"
-            trend={{ value: 2.4, isPositive: true }}
-          />
-          <MetricCard
-            title="Failing"
-            value={failingRules}
-            subtitle="Requires attention"
-            icon={AlertTriangle}
-            variant="destructive"
-            trend={{ value: 1.2, isPositive: false }}
-          />
-          <MetricCard
-            title="Avg Pass Rate"
-            value={`${avgPassRate}%`}
-            subtitle="Across all rules"
-            icon={Clock}
-            variant="default"
-          />
-        </div>
-
-        {/* Code Scanner */}
-        <CodeScanner />
-
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <RulesCatalog />
-          <div className="space-y-6">
-            <RuntimeLogs />
-            <PipelineHealth />
-          </div>
-        </div>
+        {/* Tabs */}
+        <Tabs defaultValue="extraction" className="w-full">
+          <TabsList className="grid w-full max-w-2xl mx-auto grid-cols-4 mb-8">
+            <TabsTrigger value="extraction" className="flex items-center gap-2">
+              <FileSearch className="w-4 h-4" />
+              <span className="hidden sm:inline">Rule Extraction</span>
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className="flex items-center gap-2" disabled>
+              <BarChart3 className="w-4 h-4" />
+              <span className="hidden sm:inline">Analytics</span>
+            </TabsTrigger>
+            <TabsTrigger value="pipelines" className="flex items-center gap-2" disabled>
+              <Workflow className="w-4 h-4" />
+              <span className="hidden sm:inline">Pipelines</span>
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="flex items-center gap-2" disabled>
+              <Settings className="w-4 h-4" />
+              <span className="hidden sm:inline">Settings</span>
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="extraction" className="mt-0">
+            <DQExtractionTab />
+          </TabsContent>
+          
+          <TabsContent value="analytics">
+            <div className="glass-card p-12 text-center">
+              <p className="text-muted-foreground">Analytics dashboard coming soon...</p>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="pipelines">
+            <div className="glass-card p-12 text-center">
+              <p className="text-muted-foreground">Pipeline management coming soon...</p>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="settings">
+            <div className="glass-card p-12 text-center">
+              <p className="text-muted-foreground">Settings panel coming soon...</p>
+            </div>
+          </TabsContent>
+        </Tabs>
       </main>
 
       {/* Footer */}
       <footer className="border-t border-border/50 mt-12 py-6">
         <div className="container mx-auto px-6 text-center text-sm text-muted-foreground">
-          <p>Data Quality Rules Visibility Demo • Real-time monitoring for your data pipelines</p>
+          <p>Data Quality LLM Tool • PGIM Real Estate Demo</p>
         </div>
       </footer>
     </div>
