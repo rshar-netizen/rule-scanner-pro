@@ -1,6 +1,7 @@
 import { Header } from '@/components/Header';
 import { DQExtractionTab } from '@/components/DQExtractionTab';
 import { RuleCreationTab } from '@/components/RuleCreationTab';
+import { AnalyticsDashboard } from '@/components/AnalyticsDashboard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FileSearch, BarChart3, Settings, Wand2 } from 'lucide-react';
 
@@ -31,7 +32,7 @@ const Index = () => {
               <Wand2 className="w-4 h-4" />
               <span className="hidden sm:inline">Rule Creation</span>
             </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center gap-2" disabled>
+            <TabsTrigger value="analytics" className="flex items-center gap-2">
               <BarChart3 className="w-4 h-4" />
               <span className="hidden sm:inline">Analytics</span>
             </TabsTrigger>
@@ -49,10 +50,8 @@ const Index = () => {
             <RuleCreationTab />
           </TabsContent>
           
-          <TabsContent value="analytics">
-            <div className="glass-card p-12 text-center">
-              <p className="text-muted-foreground">Analytics dashboard coming soon...</p>
-            </div>
+          <TabsContent value="analytics" className="mt-0">
+            <AnalyticsDashboard />
           </TabsContent>
           
           <TabsContent value="settings">
