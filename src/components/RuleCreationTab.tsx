@@ -1,65 +1,42 @@
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { FileUploadWidget } from './FileUploadWidget';
 import { AIGeneratedRulesTable, AIGeneratedRule } from './AIGeneratedRulesTable';
 import { AI_GENERATED_RULES, getAIRuleSummary } from '@/data/aiGeneratedRules';
-import { CreatedRulesCatalog, CreatedRule, INITIAL_CREATED_RULES } from './CreatedRulesCatalog';
 import { 
   Wand2, 
   Play, 
   CheckCircle2, 
   XCircle, 
   AlertTriangle, 
-  Plus,
   Database,
-  Code2,
   TestTube2,
   Sparkles,
   Upload,
   FileOutput,
   Loader2,
-  ArrowRight
+  ArrowRight,
+  Target,
+  TrendingUp,
+  Shield,
+  Zap
 } from 'lucide-react';
 
-const RULE_TEMPLATES = [
-  { id: 'not_null', name: 'Not Null Check', template: 'df["{column}"].isna() | (df["{column}"].astype(str).str.strip() == "")' },
-  { id: 'positive', name: 'Positive Value', template: 'pd.to_numeric(df["{column}"], errors="coerce") <= 0' },
-  { id: 'format', name: 'Format Validation', template: '~df["{column}"].astype(str).str.match(r"{pattern}")' },
-  { id: 'date_range', name: 'Date Range Check', template: 'pd.to_datetime(df["{start}"]) > pd.to_datetime(df["{end}"])' },
-  { id: 'allowed_values', name: 'Allowed Values', template: '~df["{column}"].isin([{values}])' },
-  { id: 'fk_reference', name: 'Foreign Key Reference', template: '~df["{column}"].isin(reference_df["{ref_column}"])' },
-];
-
 export const RuleCreationTab = () => {
-  // File upload state
   const [sampleDataFile, setSampleDataFile] = useState<File | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationComplete, setGenerationComplete] = useState(false);
   const [aiGeneratedRules, setAiGeneratedRules] = useState<AIGeneratedRule[]>([]);
-  
-  // Manual rule creation state
-  const [createdRules, setCreatedRules] = useState<CreatedRule[]>(INITIAL_CREATED_RULES);
-  const [isCreating, setIsCreating] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
-  
-  // Form state
-  const [selectedTable, setSelectedTable] = useState('lease_master');
-  const [selectedTemplate, setSelectedTemplate] = useState('');
-  const [ruleId, setRuleId] = useState('');
-  const [ruleDescription, setRuleDescription] = useState('');
-  const [severity, setSeverity] = useState<'ERROR' | 'WARN' | 'INFO'>('ERROR');
-  const [actionTaken, setActionTaken] = useState('drop_rows');
-  const [codeSnippet, setCodeSnippet] = useState('');
+  const [testingComplete, setTestingComplete] = useState(false);
 
   const handleGenerateRules = async () => {
     if (!sampleDataFile) return;
     
     setIsGenerating(true);
+    setTestingComplete(false);
     // Simulate AI rule generation
     await new Promise(resolve => setTimeout(resolve, 2500));
     setAiGeneratedRules(AI_GENERATED_RULES);
@@ -67,81 +44,57 @@ export const RuleCreationTab = () => {
     setGenerationComplete(true);
   };
 
-  const handleTemplateSelect = (templateId: string) => {
-    setSelectedTemplate(templateId);
-    const template = RULE_TEMPLATES.find(t => t.id === templateId);
-    if (template) {
-      setCodeSnippet(`# Rule: ${ruleId || 'NEW_RULE'}\nbad_rows = ${template.template}\ndq.log("${ruleId || 'NEW_RULE'}", table, "${severity}", "rows_failed", int(bad_rows.sum()), "${actionTaken}")\ndf = df.loc[~bad_rows].copy()`);
-    }
-  };
-
-  const handleCreateRule = () => {
-    if (!ruleId || !ruleDescription || !codeSnippet) return;
-    
-    setIsCreating(true);
-    setTimeout(() => {
-      const newRule: CreatedRule = {
-        id: `CR${createdRules.length + 1}`,
-        tableName: selectedTable,
-        ruleId: ruleId.toUpperCase(),
-        codeSnippet,
-        ruleDescription,
-        severity,
-        actionTaken,
-        createdAt: new Date().toISOString(),
-        createdBy: 'Current User',
-        version: '1.0.0',
-        isActive: true,
-        testResult: { status: 'pending', rowsAffected: 0, message: 'Not tested yet' }
-      };
-      setCreatedRules([...createdRules, newRule]);
-      setIsCreating(false);
-      
-      // Reset form
-      setRuleId('');
-      setRuleDescription('');
-      setCodeSnippet('');
-      setSelectedTemplate('');
-    }, 800);
-  };
-
-  const handleTestRules = () => {
+  const handleTestAllRules = async () => {
     setIsTesting(true);
     
-    setTimeout(() => {
-      const testedRules = createdRules.map(rule => {
-        let status: 'pass' | 'fail' | 'warning' = 'pass';
-        let rowsAffected = 0;
-        let message = 'All rows passed validation';
+    // Simulate testing
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // Update rules with test results
+    const testedRules = aiGeneratedRules.map(rule => {
+      let status: 'pass' | 'fail' | 'warning' = 'pass';
+      let rowsAffected = rule.result.rowsAffected;
+      let message = rule.result.message;
 
-        if (rule.ruleId.includes('NOT_NULL') || rule.ruleId.includes('ID')) {
-          rowsAffected = Math.floor(Math.random() * 3);
-          if (rowsAffected > 0) {
-            status = rule.severity === 'ERROR' ? 'fail' : 'warning';
-            message = `${rowsAffected} row(s) failed validation`;
-          }
-        } else if (rule.ruleId.includes('POSITIVE') || rule.ruleId.includes('RANGE')) {
-          rowsAffected = Math.floor(Math.random() * 2) + 1;
+      // Simulate varied test results based on rule type
+      if (rule.ruleId.includes('NOT_NULL') || rule.ruleId.includes('ID')) {
+        rowsAffected = Math.floor(Math.random() * 3);
+        if (rowsAffected > 0) {
           status = rule.severity === 'ERROR' ? 'fail' : 'warning';
-          message = `${rowsAffected} row(s) had invalid values`;
-        } else if (rule.ruleId.includes('DATE')) {
-          rowsAffected = 1;
-          status = 'fail';
-          message = `${rowsAffected} row(s) have end_date before start_date`;
+          message = `${rowsAffected} row(s) failed validation`;
         }
+      } else if (rule.ruleId.includes('POSITIVE') || rule.ruleId.includes('RANGE')) {
+        rowsAffected = Math.floor(Math.random() * 2) + 1;
+        status = rule.severity === 'ERROR' ? 'fail' : 'warning';
+        message = `${rowsAffected} row(s) had invalid values`;
+      }
 
-        return {
-          ...rule,
-          testResult: { status, rowsAffected, message }
-        };
-      });
-      
-      setCreatedRules(testedRules);
-      setIsTesting(false);
-    }, 1500);
+      return {
+        ...rule,
+        result: { status, rowsAffected, message }
+      };
+    });
+    
+    setAiGeneratedRules(testedRules);
+    setIsTesting(false);
+    setTestingComplete(true);
   };
 
-  const aiSummary = getAIRuleSummary();
+  const aiSummary = generationComplete ? {
+    total: aiGeneratedRules.length,
+    passed: aiGeneratedRules.filter(r => r.result.status === 'pass').length,
+    failed: aiGeneratedRules.filter(r => r.result.status === 'fail').length,
+    warnings: aiGeneratedRules.filter(r => r.result.status === 'warning').length,
+    pending: aiGeneratedRules.filter(r => r.result.status === 'pending').length,
+    errorRules: aiGeneratedRules.filter(r => r.severity === 'ERROR').length,
+    warnRules: aiGeneratedRules.filter(r => r.severity === 'WARN').length,
+    infoRules: aiGeneratedRules.filter(r => r.severity === 'INFO').length,
+    totalRowsAffected: aiGeneratedRules.reduce((sum, r) => sum + r.result.rowsAffected, 0),
+    passRate: aiGeneratedRules.length > 0 
+      ? ((aiGeneratedRules.filter(r => r.result.status === 'pass').length / aiGeneratedRules.length) * 100).toFixed(1)
+      : '0',
+    tables: [...new Set(aiGeneratedRules.map(r => r.tableName))].length
+  } : null;
 
   return (
     <div className="space-y-6">
@@ -153,18 +106,17 @@ export const RuleCreationTab = () => {
               <Wand2 className="w-6 h-6 text-primary" />
             </div>
             <div className="flex-1">
-              <h3 className="text-lg font-semibold mb-2">Rule Creation & Testing</h3>
+              <h3 className="text-lg font-semibold mb-2">AI-Powered Rule Generation</h3>
               <p className="text-muted-foreground">
                 Upload sample data to automatically generate data quality rules using AI analysis. 
-                Create custom rules using templates or logic. Test all rules against your data 
-                before deploying to production pipelines.
+                Test generated rules against your data and view comprehensive results.
               </p>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Swimlane 2: File Upload for Sample Data */}
+      {/* File Upload Section */}
       <Card className="glass-card border-border/50">
         <CardHeader>
           <div className="flex items-center gap-3">
@@ -223,7 +175,133 @@ export const RuleCreationTab = () => {
         </CardContent>
       </Card>
 
-      {/* Swimlane 3: AI Generated Rules Output */}
+      {/* KPIs Section - Only show after generation */}
+      {generationComplete && aiSummary && (
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          <Card className="glass-card border-border/50">
+            <CardContent className="p-4 text-center">
+              <div className="p-2 rounded-lg bg-primary/10 w-fit mx-auto mb-2">
+                <Database className="w-5 h-5 text-primary" />
+              </div>
+              <p className="text-2xl font-bold text-primary">{aiSummary.total}</p>
+              <p className="text-xs text-muted-foreground">Rules Generated</p>
+            </CardContent>
+          </Card>
+          
+          <Card className="glass-card border-border/50">
+            <CardContent className="p-4 text-center">
+              <div className="p-2 rounded-lg bg-success/10 w-fit mx-auto mb-2">
+                <Target className="w-5 h-5 text-success" />
+              </div>
+              <p className="text-2xl font-bold text-success">{aiSummary.tables}</p>
+              <p className="text-xs text-muted-foreground">Tables Covered</p>
+            </CardContent>
+          </Card>
+          
+          <Card className="glass-card border-border/50">
+            <CardContent className="p-4 text-center">
+              <div className="p-2 rounded-lg bg-success/10 w-fit mx-auto mb-2">
+                <CheckCircle2 className="w-5 h-5 text-success" />
+              </div>
+              <p className="text-2xl font-bold text-success">{aiSummary.passed}</p>
+              <p className="text-xs text-muted-foreground">Tests Passed</p>
+            </CardContent>
+          </Card>
+          
+          <Card className="glass-card border-border/50">
+            <CardContent className="p-4 text-center">
+              <div className="p-2 rounded-lg bg-destructive/10 w-fit mx-auto mb-2">
+                <XCircle className="w-5 h-5 text-destructive" />
+              </div>
+              <p className="text-2xl font-bold text-destructive">{aiSummary.failed}</p>
+              <p className="text-xs text-muted-foreground">Tests Failed</p>
+            </CardContent>
+          </Card>
+          
+          <Card className="glass-card border-border/50">
+            <CardContent className="p-4 text-center">
+              <div className="p-2 rounded-lg bg-warning/10 w-fit mx-auto mb-2">
+                <AlertTriangle className="w-5 h-5 text-warning" />
+              </div>
+              <p className="text-2xl font-bold text-warning">{aiSummary.warnings}</p>
+              <p className="text-xs text-muted-foreground">Warnings</p>
+            </CardContent>
+          </Card>
+          
+          <Card className="glass-card border-border/50">
+            <CardContent className="p-4 text-center">
+              <div className="p-2 rounded-lg bg-primary/10 w-fit mx-auto mb-2">
+                <TrendingUp className="w-5 h-5 text-primary" />
+              </div>
+              <p className="text-2xl font-bold text-primary">{aiSummary.passRate}%</p>
+              <p className="text-xs text-muted-foreground">Pass Rate</p>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Additional Metrics Row */}
+      {generationComplete && aiSummary && (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card className="glass-card border-destructive/30">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Error Severity Rules</p>
+                  <p className="text-xl font-bold text-destructive">{aiSummary.errorRules}</p>
+                </div>
+                <div className="p-2 rounded-lg bg-destructive/10">
+                  <Shield className="w-5 h-5 text-destructive" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="glass-card border-warning/30">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Warning Severity Rules</p>
+                  <p className="text-xl font-bold text-warning">{aiSummary.warnRules}</p>
+                </div>
+                <div className="p-2 rounded-lg bg-warning/10">
+                  <AlertTriangle className="w-5 h-5 text-warning" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="glass-card border-primary/30">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Info Severity Rules</p>
+                  <p className="text-xl font-bold text-primary">{aiSummary.infoRules}</p>
+                </div>
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <Zap className="w-5 h-5 text-primary" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="glass-card border-muted">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Total Rows Affected</p>
+                  <p className="text-xl font-bold">{aiSummary.totalRowsAffected}</p>
+                </div>
+                <div className="p-2 rounded-lg bg-muted">
+                  <Database className="w-5 h-5 text-muted-foreground" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* AI Generated Rules Output */}
       <Card className="glass-card border-border/50">
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -241,22 +319,43 @@ export const RuleCreationTab = () => {
             
             {generationComplete && (
               <div className="flex items-center gap-3">
-                <Badge variant="secondary" className="gap-1.5">
-                  <Database className="w-3 h-3" />
-                  {aiSummary.total} rules
-                </Badge>
-                <Badge className="bg-success/10 text-success gap-1.5">
-                  <CheckCircle2 className="w-3 h-3" />
-                  {aiSummary.passed} pass
-                </Badge>
-                <Badge className="bg-warning/10 text-warning gap-1.5">
-                  <AlertTriangle className="w-3 h-3" />
-                  {aiSummary.warnings} warn
-                </Badge>
-                <Badge className="bg-destructive/10 text-destructive gap-1.5">
-                  <XCircle className="w-3 h-3" />
-                  {aiSummary.failed} fail
-                </Badge>
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary" className="gap-1.5">
+                    <Database className="w-3 h-3" />
+                    {aiSummary?.total} rules
+                  </Badge>
+                  <Badge className="bg-success/10 text-success gap-1.5">
+                    <CheckCircle2 className="w-3 h-3" />
+                    {aiSummary?.passed} pass
+                  </Badge>
+                  <Badge className="bg-warning/10 text-warning gap-1.5">
+                    <AlertTriangle className="w-3 h-3" />
+                    {aiSummary?.warnings} warn
+                  </Badge>
+                  <Badge className="bg-destructive/10 text-destructive gap-1.5">
+                    <XCircle className="w-3 h-3" />
+                    {aiSummary?.failed} fail
+                  </Badge>
+                </div>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={handleTestAllRules}
+                  disabled={isTesting}
+                  className="gap-2"
+                >
+                  {isTesting ? (
+                    <>
+                      <TestTube2 className="w-4 h-4 animate-pulse" />
+                      Testing...
+                    </>
+                  ) : (
+                    <>
+                      <Play className="w-4 h-4" />
+                      Test All Rules
+                    </>
+                  )}
+                </Button>
               </div>
             )}
           </div>
@@ -288,165 +387,24 @@ export const RuleCreationTab = () => {
           )}
 
           {generationComplete && (
-            <div className="animate-fade-in">
+            <div className="animate-fade-in space-y-4">
+              {testingComplete && (
+                <div className="p-4 rounded-lg bg-success/10 border border-success/30 flex items-center gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-success" />
+                  <div>
+                    <p className="font-medium text-success">Testing Complete</p>
+                    <p className="text-sm text-muted-foreground">
+                      All {aiSummary?.total} rules have been tested against the sample data. 
+                      {aiSummary?.passed} passed, {aiSummary?.failed} failed, {aiSummary?.warnings} warnings.
+                    </p>
+                  </div>
+                </div>
+              )}
               <AIGeneratedRulesTable rules={aiGeneratedRules} />
             </div>
           )}
         </CardContent>
       </Card>
-
-      {/* Swimlane 4: Manual Rule Builder */}
-      <Card className="glass-card border-border/50">
-        <CardHeader>
-          <div className="flex items-center gap-3">
-            <Code2 className="w-5 h-5 text-primary" />
-            <div>
-              <CardTitle className="text-lg">Manual Rule Builder</CardTitle>
-              <CardDescription>Create custom data quality rules using templates</CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Target Table</label>
-              <Select value={selectedTable} onValueChange={setSelectedTable}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="lease_master">lease_master</SelectItem>
-                  <SelectItem value="property_master">property_master</SelectItem>
-                  <SelectItem value="tenant_master">tenant_master</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Rule Template</label>
-              <Select value={selectedTemplate} onValueChange={handleTemplateSelect}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select template..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {RULE_TEMPLATES.map(template => (
-                    <SelectItem key={template.id} value={template.id}>
-                      {template.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Severity</label>
-              <Select value={severity} onValueChange={(v) => setSeverity(v as 'ERROR' | 'WARN' | 'INFO')}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ERROR">ERROR - Drop rows</SelectItem>
-                  <SelectItem value="WARN">WARN - Flag/Fix</SelectItem>
-                  <SelectItem value="INFO">INFO - Log only</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Rule ID</label>
-              <Input 
-                placeholder="e.g., L1_LEASE_ID_NOT_NULL" 
-                value={ruleId}
-                onChange={(e) => setRuleId(e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Action</label>
-              <Select value={actionTaken} onValueChange={setActionTaken}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="drop_rows">Drop failing rows</SelectItem>
-                  <SelectItem value="set_null">Set to NULL</SelectItem>
-                  <SelectItem value="set_default">Set to default value</SelectItem>
-                  <SelectItem value="flag_only">Flag only (no action)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Rule Description</label>
-            <Input 
-              placeholder="e.g., lease_id must be present (non-null, non-empty)" 
-              value={ruleDescription}
-              onChange={(e) => setRuleDescription(e.target.value)}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Code Snippet</label>
-            <Textarea 
-              className="font-mono text-sm min-h-[120px] bg-background/50"
-              placeholder="Enter validation logic..."
-              value={codeSnippet}
-              onChange={(e) => setCodeSnippet(e.target.value)}
-            />
-          </div>
-
-          <div className="flex gap-3">
-            <Button 
-              onClick={handleCreateRule} 
-              disabled={!ruleId || !ruleDescription || !codeSnippet || isCreating}
-              className="gap-2"
-            >
-              {isCreating ? (
-                <>
-                  <Sparkles className="w-4 h-4 animate-pulse" />
-                  Creating...
-                </>
-              ) : (
-                <>
-                  <Plus className="w-4 h-4" />
-                  Create Rule
-                </>
-              )}
-            </Button>
-
-            {createdRules.length > 0 && (
-              <Button 
-                variant="secondary" 
-                onClick={handleTestRules}
-                disabled={isTesting}
-                className="gap-2"
-              >
-                {isTesting ? (
-                  <>
-                    <TestTube2 className="w-4 h-4 animate-pulse" />
-                    Testing...
-                  </>
-                ) : (
-                  <>
-                    <Play className="w-4 h-4" />
-                    Test All Rules
-                  </>
-                )}
-              </Button>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Swimlane 5: Created Rules Catalog */}
-      <CreatedRulesCatalog 
-        rules={createdRules} 
-        onTestRules={handleTestRules}
-        isTesting={isTesting}
-      />
     </div>
   );
 };
