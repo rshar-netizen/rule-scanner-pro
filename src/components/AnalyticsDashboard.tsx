@@ -42,76 +42,109 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 
-// Enterprise-scale analytics data for global asset & wealth management
+// PGIM Real Estate analytics data based on data dictionary
 const getAnalyticsData = () => {
-  // Enterprise-scale mock data consistent with summary statistics
+  // Data domains from PGIM Real Estate data dictionary
   const domains = [
     {
-      name: 'client_master',
-      displayName: 'Client Master',
-      rulesExtracted: 342,
-      rulesPassed: 324,
-      rulesFailed: 12,
-      rulesWarnings: 6,
-      passRate: '94.7',
-      totalRowsAffected: 8420000,
-      severityCounts: { ERROR: 12, WARN: 6, INFO: 324 }
+      name: 'property_master',
+      displayName: 'Property Master',
+      rulesExtracted: 156,
+      rulesPassed: 148,
+      rulesFailed: 5,
+      rulesWarnings: 3,
+      passRate: '94.9',
+      totalRowsAffected: 2847000,
+      severityCounts: { ERROR: 5, WARN: 3, INFO: 148 }
     },
     {
-      name: 'portfolio_holdings',
-      displayName: 'Portfolio Holdings',
-      rulesExtracted: 478,
-      rulesPassed: 451,
-      rulesFailed: 18,
-      rulesWarnings: 9,
-      passRate: '94.4',
-      totalRowsAffected: 12800000,
-      severityCounts: { ERROR: 18, WARN: 9, INFO: 451 }
+      name: 'tenant_master',
+      displayName: 'Tenant Master',
+      rulesExtracted: 78,
+      rulesPassed: 74,
+      rulesFailed: 2,
+      rulesWarnings: 2,
+      passRate: '94.9',
+      totalRowsAffected: 1245000,
+      severityCounts: { ERROR: 2, WARN: 2, INFO: 74 }
     },
     {
-      name: 'transaction_ledger',
-      displayName: 'Transaction Ledger',
-      rulesExtracted: 523,
-      rulesPassed: 498,
-      rulesFailed: 15,
-      rulesWarnings: 10,
-      passRate: '95.2',
-      totalRowsAffected: 15200000,
-      severityCounts: { ERROR: 15, WARN: 10, INFO: 498 }
+      name: 'lease_master',
+      displayName: 'Lease Master',
+      rulesExtracted: 112,
+      rulesPassed: 105,
+      rulesFailed: 4,
+      rulesWarnings: 3,
+      passRate: '93.8',
+      totalRowsAffected: 3892000,
+      severityCounts: { ERROR: 4, WARN: 3, INFO: 105 }
     },
     {
-      name: 'market_data',
-      displayName: 'Market Data',
-      rulesExtracted: 412,
-      rulesPassed: 389,
-      rulesFailed: 14,
-      rulesWarnings: 9,
-      passRate: '94.4',
-      totalRowsAffected: 6100000,
-      severityCounts: { ERROR: 14, WARN: 9, INFO: 389 }
+      name: 'property_portfolio_map',
+      displayName: 'Portfolio Mapping',
+      rulesExtracted: 45,
+      rulesPassed: 43,
+      rulesFailed: 1,
+      rulesWarnings: 1,
+      passRate: '95.6',
+      totalRowsAffected: 956000,
+      severityCounts: { ERROR: 1, WARN: 1, INFO: 43 }
     },
     {
-      name: 'compliance_reporting',
-      displayName: 'Compliance & Reporting',
-      rulesExtracted: 356,
-      rulesPassed: 338,
-      rulesFailed: 11,
-      rulesWarnings: 7,
-      passRate: '95.0',
-      totalRowsAffected: 5780000,
-      severityCounts: { ERROR: 11, WARN: 7, INFO: 338 }
+      name: 'deal_pipeline',
+      displayName: 'Deal Pipeline',
+      rulesExtracted: 95,
+      rulesPassed: 89,
+      rulesFailed: 4,
+      rulesWarnings: 2,
+      passRate: '93.7',
+      totalRowsAffected: 1823000,
+      severityCounts: { ERROR: 4, WARN: 2, INFO: 89 }
+    },
+    {
+      name: 'capex_project',
+      displayName: 'CapEx Projects',
+      rulesExtracted: 104,
+      rulesPassed: 98,
+      rulesFailed: 3,
+      rulesWarnings: 3,
+      passRate: '94.2',
+      totalRowsAffected: 2156000,
+      severityCounts: { ERROR: 3, WARN: 3, INFO: 98 }
+    },
+    {
+      name: 'property_valuation',
+      displayName: 'Property Valuation',
+      rulesExtracted: 87,
+      rulesPassed: 83,
+      rulesFailed: 2,
+      rulesWarnings: 2,
+      passRate: '95.4',
+      totalRowsAffected: 1534000,
+      severityCounts: { ERROR: 2, WARN: 2, INFO: 83 }
+    },
+    {
+      name: 'property_esg_metrics',
+      displayName: 'ESG Metrics',
+      rulesExtracted: 96,
+      rulesPassed: 91,
+      rulesFailed: 3,
+      rulesWarnings: 2,
+      passRate: '94.8',
+      totalRowsAffected: 2145000,
+      severityCounts: { ERROR: 3, WARN: 2, INFO: 91 }
     }
   ];
 
-  const totalExtracted = 2847;
-  const totalPassed = 2696;
-  const totalFailed = 102;
-  const totalWarnings = 49;
+  const totalExtracted = 773;  // Sum of all rules
+  const totalPassed = 731;
+  const totalFailed = 24;
+  const totalWarnings = 18;
   
   return {
     domain: {
-      name: 'Global Wealth Management Platform',
-      description: 'Enterprise Data Quality for Asset & Wealth Management',
+      name: 'PGIM Real Estate',
+      description: 'Real Estate Investment Data Quality Platform',
       subdomains: domains
     },
     totals: {
@@ -119,23 +152,23 @@ const getAnalyticsData = () => {
       passed: totalPassed,
       failed: totalFailed,
       warnings: totalWarnings,
-      created: 736,
-      createdPassed: 698,
-      createdFailed: 38,
-      overallPassRate: '94.7'
+      created: 89,
+      createdPassed: 84,
+      createdFailed: 5,
+      overallPassRate: '94.6'
     }
   };
 };
 
-// Trend data for charts - enterprise scale
+// Trend data for charts - PGIM scale
 const trendData = [
-  { date: 'Jan 20', extracted: 2780, passed: 2612, failed: 168 },
-  { date: 'Jan 21', extracted: 2795, passed: 2638, failed: 157 },
-  { date: 'Jan 22', extracted: 2810, passed: 2651, failed: 159 },
-  { date: 'Jan 23', extracted: 2823, passed: 2668, failed: 155 },
-  { date: 'Jan 24', extracted: 2835, passed: 2681, failed: 154 },
-  { date: 'Jan 25', extracted: 2841, passed: 2689, failed: 152 },
-  { date: 'Jan 26', extracted: 2847, passed: 2696, failed: 151 },
+  { date: 'Jan 20', extracted: 745, passed: 702, failed: 43 },
+  { date: 'Jan 21', extracted: 752, passed: 711, failed: 41 },
+  { date: 'Jan 22', extracted: 758, passed: 718, failed: 40 },
+  { date: 'Jan 23', extracted: 763, passed: 722, failed: 41 },
+  { date: 'Jan 24', extracted: 768, passed: 726, failed: 42 },
+  { date: 'Jan 25', extracted: 770, passed: 728, failed: 42 },
+  { date: 'Jan 26', extracted: 773, passed: 731, failed: 42 },
 ];
 
 const chartConfig = {
@@ -143,12 +176,12 @@ const chartConfig = {
   passed: { label: 'Passed', color: 'hsl(142, 76%, 36%)' },
   failed: { label: 'Failed', color: 'hsl(0, 84%, 60%)' },
   warnings: { label: 'Warnings', color: 'hsl(45, 93%, 47%)' },
-  client: { label: 'Client Master', color: 'hsl(var(--primary))' },
-  portfolio: { label: 'Portfolio Holdings', color: 'hsl(262, 83%, 58%)' },
+  property: { label: 'Property Master', color: 'hsl(var(--primary))' },
+  tenant: { label: 'Tenant Master', color: 'hsl(262, 83%, 58%)' },
 };
 
 export const AnalyticsDashboard = () => {
-  const [expandedSubdomains, setExpandedSubdomains] = useState<Set<string>>(new Set(['client_master', 'portfolio_holdings']));
+  const [expandedSubdomains, setExpandedSubdomains] = useState<Set<string>>(new Set(['property_master', 'lease_master']));
   const analytics = getAnalyticsData();
   
   const toggleSubdomain = (name: string) => {
@@ -205,7 +238,7 @@ export const AnalyticsDashboard = () => {
                 <p className="text-xs text-muted-foreground">Rules Extracted</p>
                 <p className="text-2xl font-bold">{analytics.totals.extracted}</p>
                 <p className="text-xs text-primary flex items-center gap-1 mt-1">
-                  <TrendingUp className="w-3 h-3" /> From 147 pipelines
+                  <TrendingUp className="w-3 h-3" /> From 89 pipelines
                 </p>
               </div>
               <div className="p-2 rounded-lg bg-primary/10">
@@ -474,23 +507,23 @@ export const AnalyticsDashboard = () => {
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
             <div className="p-4 rounded-lg bg-background/50 border border-border/30">
-              <p className="text-2xl font-bold text-primary">147</p>
+              <p className="text-2xl font-bold text-primary">89</p>
               <p className="text-xs text-muted-foreground">Pipelines Scanned</p>
             </div>
             <div className="p-4 rounded-lg bg-background/50 border border-border/30">
-              <p className="text-2xl font-bold">23</p>
+              <p className="text-2xl font-bold">8</p>
               <p className="text-xs text-muted-foreground">Data Domains</p>
             </div>
             <div className="p-4 rounded-lg bg-background/50 border border-border/30">
-              <p className="text-2xl font-bold">2,847</p>
+              <p className="text-2xl font-bold">773</p>
               <p className="text-xs text-muted-foreground">Total Rules</p>
             </div>
             <div className="p-4 rounded-lg bg-background/50 border border-border/30">
-              <p className="text-2xl font-bold">48.3M</p>
+              <p className="text-2xl font-bold">16.6M</p>
               <p className="text-xs text-muted-foreground">Rows Processed</p>
             </div>
             <div className="p-4 rounded-lg bg-background/50 border border-success/30">
-              <p className="text-2xl font-bold text-success">94.7%</p>
+              <p className="text-2xl font-bold text-success">94.6%</p>
               <p className="text-xs text-muted-foreground">Overall Health</p>
             </div>
           </div>
