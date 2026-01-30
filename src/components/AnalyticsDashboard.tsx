@@ -41,97 +41,101 @@ import {
   Zap
 } from 'lucide-react';
 import { useState } from 'react';
-import { 
-  extractedPropertyRules, 
-  extractedTenantRules, 
-  allExtractedRules 
-} from '@/data/extractedRules';
 
-// Analytics data derived from extracted rules
+// Enterprise-scale analytics data for global asset & wealth management
 const getAnalyticsData = () => {
-  const propertyRules = extractedPropertyRules;
-  const tenantRules = extractedTenantRules;
-  
-  const propertyPassed = propertyRules.filter(r => r.result.status === 'pass').length;
-  const propertyFailed = propertyRules.filter(r => r.result.status === 'fail').length;
-  const propertyWarnings = propertyRules.filter(r => r.result.status === 'warning').length;
-  
-  const tenantPassed = tenantRules.filter(r => r.result.status === 'pass').length;
-  const tenantFailed = tenantRules.filter(r => r.result.status === 'fail').length;
-  const tenantWarnings = tenantRules.filter(r => r.result.status === 'warning').length;
-  
-  const totalExtracted = allExtractedRules.length;
-  const totalPassed = propertyPassed + tenantPassed;
-  const totalFailed = propertyFailed + tenantFailed;
-  const totalWarnings = propertyWarnings + tenantWarnings;
-  
-  // Simulated created rules data
-  const createdRules = {
-    total: 5,
-    passed: 3,
-    failed: 1,
-    warnings: 1
-  };
+  // Enterprise-scale mock data consistent with summary statistics
+  const domains = [
+    {
+      name: 'client_master',
+      displayName: 'Client Master',
+      rulesExtracted: 342,
+      rulesPassed: 324,
+      rulesFailed: 12,
+      rulesWarnings: 6,
+      passRate: '94.7',
+      totalRowsAffected: 8420000,
+      severityCounts: { ERROR: 12, WARN: 6, INFO: 324 }
+    },
+    {
+      name: 'portfolio_holdings',
+      displayName: 'Portfolio Holdings',
+      rulesExtracted: 478,
+      rulesPassed: 451,
+      rulesFailed: 18,
+      rulesWarnings: 9,
+      passRate: '94.4',
+      totalRowsAffected: 12800000,
+      severityCounts: { ERROR: 18, WARN: 9, INFO: 451 }
+    },
+    {
+      name: 'transaction_ledger',
+      displayName: 'Transaction Ledger',
+      rulesExtracted: 523,
+      rulesPassed: 498,
+      rulesFailed: 15,
+      rulesWarnings: 10,
+      passRate: '95.2',
+      totalRowsAffected: 15200000,
+      severityCounts: { ERROR: 15, WARN: 10, INFO: 498 }
+    },
+    {
+      name: 'market_data',
+      displayName: 'Market Data',
+      rulesExtracted: 412,
+      rulesPassed: 389,
+      rulesFailed: 14,
+      rulesWarnings: 9,
+      passRate: '94.4',
+      totalRowsAffected: 6100000,
+      severityCounts: { ERROR: 14, WARN: 9, INFO: 389 }
+    },
+    {
+      name: 'compliance_reporting',
+      displayName: 'Compliance & Reporting',
+      rulesExtracted: 356,
+      rulesPassed: 338,
+      rulesFailed: 11,
+      rulesWarnings: 7,
+      passRate: '95.0',
+      totalRowsAffected: 5780000,
+      severityCounts: { ERROR: 11, WARN: 7, INFO: 338 }
+    }
+  ];
+
+  const totalExtracted = 2847;
+  const totalPassed = 2696;
+  const totalFailed = 102;
+  const totalWarnings = 49;
   
   return {
     domain: {
-      name: 'REIT Data Platform',
-      description: 'Real Estate Investment Trust Master Data',
-      subdomains: [
-        {
-          name: 'property_master',
-          displayName: 'Property Master',
-          rulesExtracted: propertyRules.length,
-          rulesPassed: propertyPassed,
-          rulesFailed: propertyFailed,
-          rulesWarnings: propertyWarnings,
-          passRate: ((propertyPassed / propertyRules.length) * 100).toFixed(1),
-          totalRowsAffected: propertyRules.reduce((sum, r) => sum + r.result.rowsAffected, 0),
-          severityCounts: {
-            ERROR: propertyRules.filter(r => r.severity === 'ERROR').length,
-            WARN: propertyRules.filter(r => r.severity === 'WARN').length,
-            INFO: propertyRules.filter(r => r.severity === 'INFO').length
-          }
-        },
-        {
-          name: 'tenant_master',
-          displayName: 'Tenant Master',
-          rulesExtracted: tenantRules.length,
-          rulesPassed: tenantPassed,
-          rulesFailed: tenantFailed,
-          rulesWarnings: tenantWarnings,
-          passRate: ((tenantPassed / tenantRules.length) * 100).toFixed(1),
-          totalRowsAffected: tenantRules.reduce((sum, r) => sum + r.result.rowsAffected, 0),
-          severityCounts: {
-            ERROR: tenantRules.filter(r => r.severity === 'ERROR').length,
-            WARN: tenantRules.filter(r => r.severity === 'WARN').length,
-            INFO: tenantRules.filter(r => r.severity === 'INFO').length
-          }
-        }
-      ]
+      name: 'Global Wealth Management Platform',
+      description: 'Enterprise Data Quality for Asset & Wealth Management',
+      subdomains: domains
     },
     totals: {
       extracted: totalExtracted,
       passed: totalPassed,
       failed: totalFailed,
       warnings: totalWarnings,
-      created: createdRules.total,
-      createdPassed: createdRules.passed,
-      createdFailed: createdRules.failed,
-      overallPassRate: ((totalPassed / totalExtracted) * 100).toFixed(1)
+      created: 736,
+      createdPassed: 698,
+      createdFailed: 38,
+      overallPassRate: '94.7'
     }
   };
 };
 
-// Trend data for charts
+// Trend data for charts - enterprise scale
 const trendData = [
-  { date: 'Jan 20', extracted: 12, passed: 10, failed: 2 },
-  { date: 'Jan 21', extracted: 14, passed: 12, failed: 2 },
-  { date: 'Jan 22', extracted: 15, passed: 13, failed: 2 },
-  { date: 'Jan 23', extracted: 17, passed: 14, failed: 3 },
-  { date: 'Jan 24', extracted: 17, passed: 15, failed: 2 },
-  { date: 'Jan 25', extracted: 17, passed: 14, failed: 3 },
-  { date: 'Jan 26', extracted: 17, passed: 14, failed: 3 },
+  { date: 'Jan 20', extracted: 2780, passed: 2612, failed: 168 },
+  { date: 'Jan 21', extracted: 2795, passed: 2638, failed: 157 },
+  { date: 'Jan 22', extracted: 2810, passed: 2651, failed: 159 },
+  { date: 'Jan 23', extracted: 2823, passed: 2668, failed: 155 },
+  { date: 'Jan 24', extracted: 2835, passed: 2681, failed: 154 },
+  { date: 'Jan 25', extracted: 2841, passed: 2689, failed: 152 },
+  { date: 'Jan 26', extracted: 2847, passed: 2696, failed: 151 },
 ];
 
 const chartConfig = {
@@ -139,12 +143,12 @@ const chartConfig = {
   passed: { label: 'Passed', color: 'hsl(142, 76%, 36%)' },
   failed: { label: 'Failed', color: 'hsl(0, 84%, 60%)' },
   warnings: { label: 'Warnings', color: 'hsl(45, 93%, 47%)' },
-  property: { label: 'Property Master', color: 'hsl(var(--primary))' },
-  tenant: { label: 'Tenant Master', color: 'hsl(262, 83%, 58%)' },
+  client: { label: 'Client Master', color: 'hsl(var(--primary))' },
+  portfolio: { label: 'Portfolio Holdings', color: 'hsl(262, 83%, 58%)' },
 };
 
 export const AnalyticsDashboard = () => {
-  const [expandedSubdomains, setExpandedSubdomains] = useState<Set<string>>(new Set(['property_master', 'tenant_master']));
+  const [expandedSubdomains, setExpandedSubdomains] = useState<Set<string>>(new Set(['client_master', 'portfolio_holdings']));
   const analytics = getAnalyticsData();
   
   const toggleSubdomain = (name: string) => {
@@ -201,7 +205,7 @@ export const AnalyticsDashboard = () => {
                 <p className="text-xs text-muted-foreground">Rules Extracted</p>
                 <p className="text-2xl font-bold">{analytics.totals.extracted}</p>
                 <p className="text-xs text-primary flex items-center gap-1 mt-1">
-                  <TrendingUp className="w-3 h-3" /> From 2 pipelines
+                  <TrendingUp className="w-3 h-3" /> From 147 pipelines
                 </p>
               </div>
               <div className="p-2 rounded-lg bg-primary/10">
